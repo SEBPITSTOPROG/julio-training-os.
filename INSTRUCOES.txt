@@ -1,0 +1,19 @@
+JULIO APICELO TRAINING OS 4
+
+PUBLICACAO PARA SALVAR TREINOS NO IPHONE
+
+1) Descompacte este ZIP no computador.
+2) Abra https://app.netlify.com/drop no navegador.
+3) Arraste a pasta Julio_Apicelo_Training_OS_Deploy para a area de publicacao.
+4) Abra o endereco HTTPS gerado no Safari do iPhone.
+5) No Safari, Compartilhar > Adicionar a Tela de Inicio.
+6) Verifique a mensagem Modo interativo: armazenamento ativo.
+7) Use o Backup JSON periodicamente.
+
+IMPORTANTE
+- Visualizar um .html no ChatGPT ou no app Arquivos nao garante execucao de JavaScript.
+- Em modo de visualizacao, checkboxes podem funcionar sem salvar permanentemente.
+- O app guarda dados SOMENTE no navegador/dispositivo usado.
+- Mudar de dominio, limpar dados do Safari ou instalar sob origem diferente pode causar historicos distintos.
+- A hospedagem publica deixa o codigo acessivel por URL; os dados registrados nao sao enviados a servidor por este aplicativo.
+- Nao armazene informacoes medicas sigilosas nas notas de um site publico ou dispositivo compartilhado.
