@@ -1,5 +1,5 @@
 'use strict';
-const CACHE='julio-training-v6.0.0';
+const CACHE='julio-training-v6.1.0';
 const ASSETS=['./','./index.html','./style.css','./engine.js','./app.js','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS))));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('julio-training-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));

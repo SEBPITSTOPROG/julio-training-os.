@@ -23,9 +23,34 @@ const choices={
  core:[{id:'core-crunch',name:'Abdominal no solo',kind:'core'},{id:'core-plank',name:'Prancha',kind:'core'},{id:'core-legraise',name:'Elevação de pernas',kind:'core'},{id:'core-other',name:'Outro abdômen',kind:'core'}]
 };
 plans[1].exercises[0].options='pull';plans[4].exercises[3].options='lunge';plans[2].exercises[5].options='core';plans[4].exercises[5].options='core';
+// Freeze the positional V4/V5 schema before changing the active prescription.
+const legacyPlans=clone(plans);
+plans[2].focus='Quadríceps · Glúteos · Adutores';
+plans[2].exercises=[
+ ex('squat-free','Agachamento livre',3,6,10,'bar','','Peso total com barra. Descanso de 2–3 min; amplitude controlada.'),
+ ex('leg-press','Leg press',2,10,15,'machine','','Carga indicada no aparelho. Descanso de 2 min.'),
+ ex('leg-extension','Cadeira extensora',2,10,15,'machine','','Séries convencionais, sem drop-set. Descanso de 90–120 s.'),
+ ex('lying-curl','Mesa flexora',3,10,15,'machine','','Execução controlada. Descanso de 90–120 s.'),
+ ex('hip-adduction','Cadeira adutora',2,12,20,'machine','','Parte interna da coxa. Tronco estável e retorno controlado. Descanso de 90 s.'),
+ ex('calf-standing','Panturrilha em pé',3,10,15,'machine','','Amplitude controlada. Descanso de 90 s.'),
+ ex('core-crunch','Abdominal no solo',2,12,20,'core','','Sem carga obrigatória. Descanso de 60–90 s.')
+];
+plans[4].focus='Prioridade de glúteos · Posteriores';
+plans[4].exercises=[
+ ex('hip-thrust-bar','Elevação pélvica com barra',3,8,12,'bar','','Peso total com barra. Termine a extensão do quadril sem arquear a lombar. Descanso de 2–3 min.'),
+ ex('romanian','Levantamento romeno',3,8,10,'bar','','Peso total com barra. Movimento controlado, sem rest-pause. Descanso de 2–3 min.'),
+ ex('bulgarian-supported','Agachamento búlgaro com apoio',2,8,12,'unilateral','','Carga externa total; repetições por perna. Apoio para equilíbrio. Descanso de 90–120 s após os dois lados.'),
+ ex('seated-curl','Cadeira flexora',2,10,15,'machine','','Séries convencionais, sem rest-pause. Descanso de 90–120 s.'),
+ ex('hip-abduction','Cadeira abdutora',3,12,20,'machine','','Tronco estável. Controle a abertura e o retorno, sem impulso. Descanso de 90 s.'),
+ ex('calf-seated','Panturrilha sentado',3,12,20,'machine','','Amplitude controlada. Descanso de 90 s.'),
+ ex('core-crunch','Abdominal no solo',2,12,20,'core','','Sem carga obrigatória. Descanso de 60–90 s.')
+];
+choices.hipthrust=[{id:'hip-thrust-bar',name:'Elevação pélvica com barra',kind:'bar',note:'Peso total com barra. Não compense arqueando a lombar. Descanso de 2–3 min.'},{id:'hip-thrust-machine',name:'Elevação pélvica na máquina',kind:'machine',note:'Carga indicada e aparelho identificado. Não compense arqueando a lombar. Descanso de 2–3 min.'}];
+plans[4].exercises[0].options='hipthrust';plans[2].exercises[6].options='core';plans[4].exercises[6].options='core';
+
 function empty(){return {schema:VERSION,sessions:[],weights:[],preferences:{autoTimer:false,sound:false,vibration:false},lastBackup:null};}
 const newSet=()=>({kg:'',qty:'',rir:'',done:false});
-function createSession(date,workout){if(!validDate(date))throw Error('Data inválida.');const p=plans.find(p=>p.id===workout);if(!p||workout==='recovery')throw Error('Treino inválido.');return {id:date+'|'+workout,date,workout,planVersion:VERSION,status:'draft',updated:Date.now(),notes:'',duration:'',exercises:p.exercises.map((e,i)=>({...clone(e),slot:workout+'-'+e.id,sets:Array.from({length:e.n},newSet),extras:[],legacy:false}))};}
+function createSession(date,workout,useLegacy=false){if(!validDate(date))throw Error('Data inválida.');const p=(useLegacy?legacyPlans:plans).find(p=>p.id===workout);if(!p||workout==='recovery')throw Error('Treino inválido.');return {id:date+'|'+workout,date,workout,planVersion:VERSION,planRevision:useLegacy?1:2,status:'draft',updated:Date.now(),notes:'',duration:'',exercises:p.exercises.map((e,i)=>({...clone(e),slot:workout+'-'+e.id,sets:Array.from({length:e.n},newSet),extras:[],legacy:false}))};}
 const hasLoad=e=>!['core','body'].includes(e.kind);
 function validSet(e,s){if(!s||typeof s.done!=='boolean')return false;const q=Number(s.qty);if(s.qty===''||!Number.isFinite(q)||q<=0||q>(e.unit==='sec'?86400:1000)||!Number.isInteger(q))return false;if(hasLoad(e)&&(s.kg===''||!Number.isFinite(Number(s.kg))||Number(s.kg)<0||Number(s.kg)>2000))return false;if(s.rir!==''&&(!Number.isFinite(Number(s.rir))||Number(s.rir)<0||Number(s.rir)>10||!Number.isInteger(Number(s.rir))))return false;return true;}
 const validSets=e=>e.sets.filter(s=>s.done&&validSet(e,s));
@@ -44,7 +69,7 @@ function validateDB(db){const fail=()=>{throw Error('Backup incompatível ou inv
  if(completed(s)){if(s.workout==='cardio'){if(Number(s.duration)<=0)fail();}else if(!count(s)||(s.status==='complete'&&count(s)!==planned(s)))fail();}}
  const dates=new Set();for(const w of db.weights){if(!obj(w)||!validDate(w.date)||!num(w.value,20,300)||dates.has(w.date))fail();dates.add(w.date);}if(!obj(db.preferences)||['autoTimer','sound','vibration'].some(k=>typeof db.preferences[k]!=='boolean')||(db.lastBackup!==null&&!num(db.lastBackup,0,1e16)))fail();return clone(db);}
 function migrate(old){if(!old||typeof old!=='object'||!old.entries||typeof old.entries!=='object'||Array.isArray(old.entries)||!Array.isArray(old.weights)||Object.keys(old.entries).length>50000)throw Error('Backup antigo inválido.');const db=empty();let warnings=0;
- for(const [key,entry] of Object.entries(old.entries)){const [d,w,...rest]=key.split('|');if(!validDate(d)||rest.length||!plans.some(p=>p.id===w&&w!=='recovery')||!entry||typeof entry.fields!=='object'||Array.isArray(entry.fields))throw Error('Registro antigo inválido.');const s=createSession(d,w);s.planVersion=5;s.legacyOriginal=clone(entry);s.updated=Number.isFinite(entry.updated)?entry.updated:Date.now();s.notes=String(entry.fields[w+':notes']||'').slice(0,20000);s.duration=entry.fields['cardio:minutes']||'';
+ for(const [key,entry] of Object.entries(old.entries)){const [d,w,...rest]=key.split('|');if(!validDate(d)||rest.length||!plans.some(p=>p.id===w&&w!=='recovery')||!entry||typeof entry.fields!=='object'||Array.isArray(entry.fields))throw Error('Registro antigo inválido.');const s=createSession(d,w,true);s.planVersion=5;s.legacyOriginal=clone(entry);s.updated=Number.isFinite(entry.updated)?entry.updated:Date.now();s.notes=String(entry.fields[w+':notes']||'').slice(0,20000);s.duration=entry.fields['cardio:minutes']||'';
  s.exercises.forEach((e,i)=>{e.legacy=true;e.note+=' Registro legado: convenção de carga não confirmada.';if(w==='lower-b'&&i===2){e.id='hack-squat';e.name='Agachamento hack';e.kind='machine';}if(w==='pull'&&i===0){e.id='legacy-pull-choice';e.name='Puxada alta ou barra fixa (legado)';}if(w==='lower-b'&&i===3){e.id='legacy-lunge-choice';e.name='Afundo ou passada (legado)';}if(e.kind==='core'){e.id='legacy-core';e.name='Abdômen não especificado (legado)';e.unit=entry.fields[w+'-'+i+':unit']==='sec'?'sec':'reps';}e.slot=w+'-legacy-'+i;e.sets=e.sets.map((r,j)=>{const b=w+'-'+i+':'+j;const raw={kg:e.kind==='core'?'':(entry.fields[b+':kg']??''),qty:entry.fields[b+(e.kind==='core'?':qty':':reps')]??'',rir:'',done:entry.fields[b+':done']===true};for(const [f,max] of [['kg',2000],['qty',86400]])if(raw[f]!==''&&(!Number.isFinite(Number(raw[f]))||Number(raw[f])<0||Number(raw[f])>max)){raw[f]='';warnings++;}if(raw.done&&!validSet(e,raw)){raw.done=false;warnings++;}return raw;});if(entry.fields[w+'-'+i+':extra:done'])e.note+=' Técnica extra assinalada na versão antiga, sem quantidade disponível.';});
  if(entry.finished){try{finish(s,s.date);}catch(_){warnings++;}}db.sessions.push(s);}
  for(const w of old.weights){if(!w||!validDate(w.date)||!Number.isFinite(Number(w.value))||Number(w.value)<20||Number(w.value)>300)throw Error('Peso inválido no backup antigo.');db.weights=db.weights.filter(x=>x.date!==w.date);db.weights.push({date:w.date,value:Number(w.value)});}db.weights.sort((a,b)=>a.date.localeCompare(b.date));db.legacySource=clone(old);db.migrationWarnings=warnings;return validateDB(db);}
