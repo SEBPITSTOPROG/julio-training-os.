@@ -25,40 +25,77 @@ const choices={
 plans[1].exercises[0].options='pull';plans[4].exercises[3].options='lunge';plans[2].exercises[5].options='core';plans[4].exercises[5].options='core';
 // Freeze the positional V4/V5 schema before changing the active prescription.
 const legacyPlans=clone(plans);
-plans[2].focus='Quadríceps · Glúteos · Adutores';
-plans[2].exercises=[
- ex('squat-free','Agachamento livre',3,6,10,'bar','','Peso total com barra. Descanso de 2–3 min; amplitude controlada.'),
- ex('leg-press','Leg press',2,10,15,'machine','','Carga indicada no aparelho. Descanso de 2 min.'),
- ex('leg-extension','Cadeira extensora',2,10,15,'machine','','Séries convencionais, sem drop-set. Descanso de 90–120 s.'),
- ex('lying-curl','Mesa flexora',3,10,15,'machine','','Execução controlada. Descanso de 90–120 s.'),
- ex('hip-adduction','Cadeira adutora',2,12,20,'machine','','Parte interna da coxa. Tronco estável e retorno controlado. Descanso de 90 s.'),
- ex('calf-standing','Panturrilha em pé',3,10,15,'machine','','Amplitude controlada. Descanso de 90 s.'),
- ex('core-crunch','Abdominal no solo',2,12,20,'core','','Sem carga obrigatória. Descanso de 60–90 s.')
+
+// Active V6.2 prescription. Historical snapshots and the legacy positional map stay intact.
+function exercise(id,name,n,lo,hi,kind,rest,rir,extra=''){
+ return ex(id,name,n,lo,hi,kind,'',(C[kind]||'')+' Descanso: '+rest+'. Esforço: '+rir+' repetições em reserva. '+extra);
+}
+const core=n=>exercise('core-crunch','Abdominal no solo',n,12,20,'core','60–90 s','1–2','Sem carga obrigatória. Movimento controlado; progrida a dificuldade quando 20 repetições ficarem fáceis.');
+const revised=[
+ {id:'push',name:'PUSH',day:'SEG',focus:'Peito · Ombros · Tríceps · Abdômen',exercises:[
+ exercise('bench-bar','Supino reto com barra',3,6,8,'bar','2–3 min','1–2'),
+ exercise('incline-db','Supino inclinado com halteres',3,8,12,'db','2–3 min','1–2'),
+ exercise('cable-fly','Crucifixo no cabo',3,10,15,'machine','90–120 s','1–2'),
+ exercise('shoulder-db','Desenvolvimento com halteres sentado',2,8,12,'db','2 min','1–2'),
+ exercise('lateral-db','Elevação lateral',3,12,20,'db','90–120 s','1–2'),
+ exercise('triceps-pulley','Tríceps corda na polia',3,10,15,'machine','90–120 s','1–2'),core(2)]},
+ {id:'legs-a',name:'LEGS A',day:'TER',focus:'Quadríceps · Glúteos · Adutores',exercises:[
+ exercise('squat-free','Agachamento livre',3,6,10,'bar','2–3 min','2','Sem conjugar com afundo neste bloco.'),
+ exercise('leg-press','Leg press 45°',3,10,15,'machine','2–3 min','1–2','Registre as anilhas adicionadas e identifique o aparelho. Mantenha a mesma convenção.'),
+ exercise('leg-extension','Cadeira extensora',3,10,15,'machine','90–120 s','1–2'),
+ exercise('lying-curl','Mesa flexora',3,10,15,'machine','90–120 s','1–2'),
+ exercise('hip-adduction','Cadeira adutora',2,12,20,'machine','90 s','1–2'),
+ exercise('calf-standing','Panturrilha em pé',3,10,15,'machine','90–120 s','1–2')]},
+ {id:'pull',name:'PULL',day:'QUA',focus:'Costas · Deltoide posterior · Bíceps',exercises:[
+ exercise('neutral-pulldown','Puxada alta pela frente, pegada neutra',3,8,12,'machine','2–3 min','1–2'),
+ exercise('supported-row','Remada na máquina com peito apoiado',3,8,12,'machine','2–3 min','1–2'),
+ exercise('straight-arm-pulldown','Pulldown com braços quase estendidos',2,12,15,'machine','90–120 s','1–2'),
+ exercise('reverse-fly','Voador inverso',3,12,20,'machine','90–120 s','1–2'),
+ exercise('incline-curl','Rosca com halteres no banco inclinado',3,8,12,'db','90–120 s','1–2'),
+ exercise('scott-curl','Rosca Scott na máquina',2,10,15,'machine','90–120 s','1–2')]},
+ {id:'cardio',name:'CARDIO + CORE',day:'QUI',focus:'Cardio leve 20–30 min · Abdômen',exercises:[core(3)]},
+ {id:'lower-b',name:'LOWER B',day:'SEX',focus:'Prioridade de glúteos · Posteriores',exercises:[
+ exercise('hip-thrust-bar','Elevação pélvica com barra',3,8,12,'bar','2–3 min','1–2','Termine a extensão do quadril sem arquear a lombar.'),
+ exercise('romanian','Levantamento romeno',3,8,10,'bar','2–3 min','2','Preserve a técnica e controle o movimento.'),
+ exercise('bulgarian-supported','Agachamento búlgaro com apoio',3,8,12,'unilateral','90–120 s após os dois lados','2','Uma série inclui os dois lados. Use apoio para equilíbrio.'),
+ exercise('seated-curl','Cadeira flexora',3,10,15,'machine','90–120 s','1–2'),
+ exercise('hip-abduction','Cadeira abdutora',3,12,20,'machine','90 s','1–2'),
+ exercise('calf-seated','Panturrilha sentado',3,12,20,'machine','90–120 s','1–2')]},
+ {id:'upper',name:'UPPER',day:'SÁB',focus:'Superiores complementar',exercises:[
+ exercise('incline-db','Supino inclinado com halteres',3,8,12,'db','2–3 min','1–2'),
+ exercise('supported-row','Remada na máquina com peito apoiado',3,8,12,'machine','2–3 min','1–2'),
+ exercise('neutral-pulldown','Puxada alta pela frente, pegada neutra',2,10,15,'machine','2–3 min','1–2'),
+ exercise('lateral-db','Elevação lateral',3,12,20,'db','90–120 s','1–2'),
+ exercise('overhead-triceps','Tríceps acima da cabeça no cabo',3,10,15,'machine','90–120 s','1–2'),
+ exercise('hammer-curl','Rosca martelo',2,10,15,'db','90–120 s','1–2')]},
+ {id:'recovery',name:'OFF',day:'DOM',focus:'Descanso',exercises:[]}
 ];
-plans[4].focus='Prioridade de glúteos · Posteriores';
-plans[4].exercises=[
- ex('hip-thrust-bar','Elevação pélvica com barra',3,8,12,'bar','','Peso total com barra. Termine a extensão do quadril sem arquear a lombar. Descanso de 2–3 min.'),
- ex('romanian','Levantamento romeno',3,8,10,'bar','','Peso total com barra. Movimento controlado, sem rest-pause. Descanso de 2–3 min.'),
- ex('bulgarian-supported','Agachamento búlgaro com apoio',2,8,12,'unilateral','','Carga externa total; repetições por perna. Apoio para equilíbrio. Descanso de 90–120 s após os dois lados.'),
- ex('seated-curl','Cadeira flexora',2,10,15,'machine','','Séries convencionais, sem rest-pause. Descanso de 90–120 s.'),
- ex('hip-abduction','Cadeira abdutora',3,12,20,'machine','','Tronco estável. Controle a abertura e o retorno, sem impulso. Descanso de 90 s.'),
- ex('calf-seated','Panturrilha sentado',3,12,20,'machine','','Amplitude controlada. Descanso de 90 s.'),
- ex('core-crunch','Abdominal no solo',2,12,20,'core','','Sem carga obrigatória. Descanso de 60–90 s.')
-];
-choices.hipthrust=[{id:'hip-thrust-bar',name:'Elevação pélvica com barra',kind:'bar',note:'Peso total com barra. Não compense arqueando a lombar. Descanso de 2–3 min.'},{id:'hip-thrust-machine',name:'Elevação pélvica na máquina',kind:'machine',note:'Carga indicada e aparelho identificado. Não compense arqueando a lombar. Descanso de 2–3 min.'}];
-plans[4].exercises[0].options='hipthrust';plans[2].exercises[6].options='core';plans[4].exercises[6].options='core';
+plans.splice(0,plans.length,...revised);
+choices.hipthrust=[{id:'hip-thrust-bar',name:'Elevação pélvica com barra',kind:'bar',note:plans[4].exercises[0].note},{id:'hip-thrust-machine',name:'Elevação pélvica na máquina',kind:'machine',note:'Carga indicada no aparelho. Descanso: 2–3 min. RIR 1–2. Não arqueie a lombar.'}];
+choices.chestfly=[{id:'cable-fly',name:'Crucifixo no cabo',kind:'machine'},{id:'pec-deck',name:'Voador',kind:'machine'}];
+choices.scott=[{id:'scott-curl',name:'Rosca Scott na máquina',kind:'machine'},{id:'scott-ez',name:'Rosca Scott com barra EZ',kind:'bar'}];
+plans[0].exercises[2].options='chestfly';plans[2].exercises[5].options='scott';
+plans[4].exercises[0].options='hipthrust';plans[0].exercises[6].options='core';plans[3].exercises[0].options='core';
 
 function empty(){return {schema:VERSION,sessions:[],weights:[],preferences:{autoTimer:false,sound:false,vibration:false},lastBackup:null};}
 const newSet=()=>({kg:'',qty:'',rir:'',done:false});
-function createSession(date,workout,useLegacy=false){if(!validDate(date))throw Error('Data inválida.');const p=(useLegacy?legacyPlans:plans).find(p=>p.id===workout);if(!p||workout==='recovery')throw Error('Treino inválido.');return {id:date+'|'+workout,date,workout,planVersion:VERSION,planRevision:useLegacy?1:2,status:'draft',updated:Date.now(),notes:'',duration:'',exercises:p.exercises.map((e,i)=>({...clone(e),slot:workout+'-'+e.id,sets:Array.from({length:e.n},newSet),extras:[],legacy:false}))};}
+function createSession(date,workout,useLegacy=false){if(!validDate(date))throw Error('Data inválida.');const p=(useLegacy?legacyPlans:plans).find(p=>p.id===workout);if(!p||workout==='recovery')throw Error('Treino inválido.');return {id:date+'|'+workout,date,workout,planVersion:VERSION,planRevision:useLegacy?1:3,status:'draft',updated:Date.now(),notes:'',duration:'',exercises:p.exercises.map((e,i)=>({...clone(e),slot:workout+'-'+e.id,sets:Array.from({length:e.n},newSet),extras:[],legacy:false}))};}
 const hasLoad=e=>!['core','body'].includes(e.kind);
 function validSet(e,s){if(!s||typeof s.done!=='boolean')return false;const q=Number(s.qty);if(s.qty===''||!Number.isFinite(q)||q<=0||q>(e.unit==='sec'?86400:1000)||!Number.isInteger(q))return false;if(hasLoad(e)&&(s.kg===''||!Number.isFinite(Number(s.kg))||Number(s.kg)<0||Number(s.kg)>2000))return false;if(s.rir!==''&&(!Number.isFinite(Number(s.rir))||Number(s.rir)<0||Number(s.rir)>10||!Number.isInteger(Number(s.rir))))return false;return true;}
 const validSets=e=>e.sets.filter(s=>s.done&&validSet(e,s));
 const count=s=>s.exercises.reduce((n,e)=>n+validSets(e).length,0);
 const planned=s=>s.exercises.reduce((n,e)=>n+e.sets.length,0);
-function finish(s,now=today()){if(s.date>now)throw Error('Não é possível concluir treino com data futura.');if(s.workout==='cardio'){if(!Number.isFinite(Number(s.duration))||Number(s.duration)<=0||Number(s.duration)>1440)throw Error('Informe a duração válida do cardio em minutos.');s.status='complete';return s;}
+function finish(s,now=today()){
+ if(s.date>now)throw Error('Não é possível concluir treino com data futura.');
  if(s.exercises.some(e=>[...e.sets,...e.extras].some(r=>r.done&&!validSet(e,r))))throw Error('Revise as séries marcadas com valores inválidos.');
+ if(s.workout==='cardio'){
+  const minutes=Number(s.duration),hasCardio=s.duration!==''&&Number.isFinite(minutes)&&minutes>0&&minutes<=1440;
+  if(s.duration!==''&&!hasCardio)throw Error('Informe uma duração válida do cardio em minutos.');
+  if(!hasCardio&&!count(s))throw Error('Registre cardio ou pelo menos uma série válida de abdômen.');
+  s.status=hasCardio&&count(s)===planned(s)?'complete':'partial';return s;
+ }
  if(!count(s))throw Error('Registre e conclua pelo menos uma série válida.');s.status=count(s)===planned(s)?'complete':'partial';return s;}
+
 const completed=s=>s.status==='complete'||s.status==='partial';
 function comparableKey(e){return [e.id,e.kind,e.unit,e.equipment.trim().toLowerCase(),e.customName||''].join('|');}
 function volume(e,extra=false){if(e.legacy||!hasLoad(e)||e.kind==='assist'||e.unit==='sec')return 0;return (extra?e.extras:e.sets).filter(s=>s.done&&validSet(e,s)).reduce((n,s)=>n+Number(s.kg)*Number(s.qty)*(e.kind==='db'||e.kind==='unilateral'?2:1),0);}
@@ -66,7 +103,7 @@ function records(db,e,before='9999-12-31',exclude=''){return db.sessions.filter(
 function metrics(db,from='0000-01-01',to='9999-12-31',workout='all'){const ss=db.sessions.filter(s=>s.date>=from&&s.date<=to&&(workout==='all'||s.workout===workout));const closed=ss.filter(completed);return {complete:closed.filter(s=>s.status==='complete').length,partial:closed.filter(s=>s.status==='partial').length,draft:ss.filter(s=>s.status==='draft').length,sets:closed.reduce((a,s)=>a+count(s),0),volume:closed.reduce((a,s)=>a+s.exercises.reduce((b,e)=>b+volume(e),0),0),extra:closed.reduce((a,s)=>a+s.exercises.reduce((b,e)=>b+volume(e,true),0),0)};}
 function validateDB(db){const fail=()=>{throw Error('Backup incompatível ou inválido. Nenhum dado foi substituído.');};const obj=x=>x&&typeof x==='object'&&!Array.isArray(x);const str=(x,max=20000)=>typeof x==='string'&&x.length<=max;const num=(x,min,max)=>typeof x==='number'&&Number.isFinite(x)&&x>=min&&x<=max;const value=(x,max)=>x===''||((typeof x==='string'||typeof x==='number')&&String(x).trim()!==''&&Number.isFinite(Number(x))&&Number(x)>=0&&Number(x)<=max);
  if(!obj(db)||db.schema!==VERSION||!Array.isArray(db.sessions)||!Array.isArray(db.weights)||db.sessions.length>50000||db.weights.length>50000)fail();const ids=new Set();for(const s of db.sessions){if(!obj(s)||!validDate(s.date)||!plans.some(p=>p.id===s.workout)||s.workout==='recovery'||s.id!==s.date+'|'+s.workout||ids.has(s.id)||!['draft','partial','complete'].includes(s.status)||!num(s.updated,0,1e16)||!num(s.planVersion,1,VERSION)||!str(s.notes)||!value(s.duration,1440)||!Array.isArray(s.exercises)||s.exercises.length>60)fail();ids.add(s.id);const slots=new Set();for(const e of s.exercises){if(!obj(e)||!str(e.id,150)||!str(e.slot,200)||slots.has(e.slot)||!str(e.name,200)||!str(e.equipment,200)||!str(e.note,2000)||!str(e.tech,100)||!['bar','db','machine','body','unilateral','core','additional','assist'].includes(e.kind)||!['reps','sec'].includes(e.unit)||!num(e.n,1,100)||!num(e.lo,0,1000)||!num(e.hi,e.lo,1000)||!Array.isArray(e.sets)||e.sets.length!==e.n||!Array.isArray(e.extras)||e.extras.length>50||typeof e.legacy!=='boolean'||(e.customName!==undefined&&!str(e.customName,200)))fail();slots.add(e.slot);for(const r of [...e.sets,...e.extras])if(!obj(r)||typeof r.done!=='boolean'||!value(r.kg,2000)||!value(r.qty,86400)||!value(r.rir,10)||(r.done&&!validSet(e,r)))fail();}
- if(completed(s)){if(s.workout==='cardio'){if(Number(s.duration)<=0)fail();}else if(!count(s)||(s.status==='complete'&&count(s)!==planned(s)))fail();}}
+ if(completed(s)){if(s.workout==='cardio'){const hasCardio=Number(s.duration)>0;if(!hasCardio&&!count(s))fail();if(s.status==='complete'&&(!hasCardio||count(s)!==planned(s)))fail();}else if(!count(s)||(s.status==='complete'&&count(s)!==planned(s)))fail();}}
  const dates=new Set();for(const w of db.weights){if(!obj(w)||!validDate(w.date)||!num(w.value,20,300)||dates.has(w.date))fail();dates.add(w.date);}if(!obj(db.preferences)||['autoTimer','sound','vibration'].some(k=>typeof db.preferences[k]!=='boolean')||(db.lastBackup!==null&&!num(db.lastBackup,0,1e16)))fail();return clone(db);}
 function migrate(old){if(!old||typeof old!=='object'||!old.entries||typeof old.entries!=='object'||Array.isArray(old.entries)||!Array.isArray(old.weights)||Object.keys(old.entries).length>50000)throw Error('Backup antigo inválido.');const db=empty();let warnings=0;
  for(const [key,entry] of Object.entries(old.entries)){const [d,w,...rest]=key.split('|');if(!validDate(d)||rest.length||!plans.some(p=>p.id===w&&w!=='recovery')||!entry||typeof entry.fields!=='object'||Array.isArray(entry.fields))throw Error('Registro antigo inválido.');const s=createSession(d,w,true);s.planVersion=5;s.legacyOriginal=clone(entry);s.updated=Number.isFinite(entry.updated)?entry.updated:Date.now();s.notes=String(entry.fields[w+':notes']||'').slice(0,20000);s.duration=entry.fields['cardio:minutes']||'';

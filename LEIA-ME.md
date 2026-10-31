@@ -1,57 +1,122 @@
-# Julio Training OS V6.0.0
+# Julio Training OS V6.2.0
 
-Atualização preparada em 30/10/2026 a partir do app publicado em https://sebpitstoprog.github.io/julio-training-os./index.html.
+Atualização de 31/10/2026 para o aplicativo publicado em:
+https://sebpitstoprog.github.io/julio-training-os./index.html
 
-## O que mudou
+## Divisão semanal
 
-- Agachamento hack substituído por agachamento livre no LOWER B, mantendo 3 séries de 8–12 repetições. O LEGS A continua com agachamento livre, 3 séries de 6–8. Demais séries e faixas da ficha preservadas.
-- Sessões vazias bloqueadas; estados de rascunho, parcial e concluído.
-- Campos numéricos validados, RIR opcional e identificação do equipamento.
-- Movimento explícito para puxada/barra fixa, afundo/passada e abdômen.
-- Abdômen por repetições ou segundos; mudanças de movimento/unidade limpam os valores desse exercício mediante confirmação.
-- Histórico clicável com filtros; abertura da ficha e dos valores completos da sessão.
-- Última sessão comparável no próprio exercício; gráficos e tabelas por exercício.
-- Comparação de repetições quando carga e quantidade de séries são iguais; checagem da faixa da ficha.
-- Volume-base e volume de extensões separados; rascunhos fora dos totais.
-- Pesagens com data própria, gráfico e média das pesagens disponíveis nos sete dias até o último registro.
-- Cronômetro fixo, início automático opcional, som e vibração quando permitidos.
-- Backups JSON completos, CSV analítico, prévia/validação de importação e cópia de segurança antes de substituir ou limpar.
-- Fichas e nomes salvos como fotografia da sessão. IDs permanentes substituem a dependência de posição.
-- Migração V4/V5 conserva a origem, o nome do hack e valores antigos. Registros legados ficam fora dos comparativos e da tonelagem V6 quando sua convenção não está confirmada.
-- Manifesto e service worker para instalação e cache offline em HTTPS.
+- Segunda: PUSH + abdômen, 19 séries.
+- Terça: LEGS A, 17 séries.
+- Quarta: PULL, 16 séries.
+- Quinta: cardio leve de 20–30 minutos + abdômen, 3 séries.
+- Sexta: LOWER B, 18 séries.
+- Sábado: UPPER complementar, 16 séries.
+- Domingo: descanso.
 
-## Publicação no repositório existente
+Total: 89 séries-base semanais, incluindo panturrilhas e abdômen. Séries de aquecimento não entram nessa contagem.
 
-1. Antes da atualização, exporte um JSON no app antigo e confirme que o arquivo foi salvo.
-2. Publique TODOS os arquivos da raiz deste pacote na pasta utilizada pelo GitHub Pages: index.html, app.js, engine.js, style.css, sw.js, manifest.webmanifest e os dois PNGs. A pasta tests e este LEIA-ME são documentação opcional.
-3. Preserve o endereço e o caminho atuais. O armazenamento pertence à origem do navegador; mudar de domínio não leva os registros consigo.
-4. Aguarde o deploy do GitHub Pages. Feche todas as abas e a versão instalada do app, depois reabra online. Um service worker antigo pode manter a tela antiga até ser substituído e todas as abas antigas serem fechadas.
-5. Confirme “Training OS V6.0.0” no rodapé. Em Dados, aguarde “Pronto para abrir sem internet”. Não apague os dados do Safari para forçar uma atualização.
-6. Se necessário, importe o JSON antigo pela aba Dados. Confira a prévia antes de substituir os registros atuais.
+## Fichas
 
-## Migração e comparabilidade
+### PUSH
 
-A chave antiga julio_apicelo_training_v4 não é apagada. A V6 usa julio_training_v6 e grava uma cópia estruturada da origem dentro dos dados migrados. Séries antigas marcadas sem quantidade/carga válidas deixam de contar, mas a entrada original permanece preservada. Pesagens duplicadas no mesmo dia são consolidadas no último valor, com a origem completa mantida no backup migrado.
+- Supino reto com barra: 3×6–8.
+- Supino inclinado com halteres: 3×8–12.
+- Crucifixo no cabo ou voador: 3×10–15.
+- Desenvolvimento com halteres sentado: 2×8–12.
+- Elevação lateral: 3×12–20.
+- Tríceps corda na polia: 3×10–15.
+- Abdominal no solo: 2×12–20.
 
-O histórico antigo não é convertido automaticamente em histórico de novos movimentos. O hack continua chamado hack nos registros antigos. A fotografia de cada sessão garante que atualizações futuras da ficha não mudem o significado dos dados anteriores.
+### LEGS A
 
-## Limites explícitos
+- Agachamento livre: 3×6–10.
+- Leg press 45°: 3×10–15.
+- Cadeira extensora: 3×10–15.
+- Mesa flexora: 3×10–15.
+- Cadeira adutora: 2×12–20.
+- Panturrilha em pé: 3×10–15.
 
-- NÃO há conta, backend ou sincronização automática em nuvem. GitHub Pages hospeda os arquivos do app; não armazena seu histórico de treino. Transferência entre dispositivos é feita por JSON.
-- Offline, comportamento com tela bloqueada, som e vibração precisam de validação no Safari real após publicação HTTPS. A prévia local não permite validar esse ciclo completo.
-- RIR é uma estimativa do usuário, não uma medida automática. O campo pode ficar vazio. Em exercícios por tempo, deixe-o vazio se não fizer sentido para sua execução.
-- Volume é carga externa registrada. Não mede hipertrofia. Assistência na barra fixa e peso corporal não entram na tonelagem. Halteres e séries por perna usam fator dois, conforme a convenção indicada.
-- O app não decide aumento de carga nem altera a prescrição automaticamente.
-- Uma sessão por tipo de treino por data. Outra sessão do mesmo tipo no mesmo dia reutiliza esse registro.
-- Cópia de segurança LOCAL não substitui o arquivo JSON guardado fora do navegador. Há uma cópia local anterior; uma nova operação de substituição atualiza essa cópia.
-- Exportar inicia o download. O app não consegue confirmar se o sistema operacional reteve o arquivo; confira no app Arquivos/Downloads.
+### PULL
+
+- Puxada alta pela frente, pegada neutra: 3×8–12.
+- Remada na máquina com peito apoiado: 3×8–12.
+- Pulldown com braços quase estendidos: 2×12–15.
+- Voador inverso: 3×12–20.
+- Rosca com halteres no banco inclinado: 3×8–12.
+- Rosca Scott na máquina ou com barra EZ: 2×10–15.
+
+### CARDIO + CORE
+
+- Cardio leve: 20–30 minutos em ritmo confortável.
+- Abdominal no solo: 3×12–20.
+
+### LOWER B
+
+- Elevação pélvica com barra ou máquina: 3×8–12.
+- Levantamento romeno: 3×8–10.
+- Agachamento búlgaro com apoio: 3×8–12 por perna.
+- Cadeira flexora: 3×10–15.
+- Cadeira abdutora: 3×12–20.
+- Panturrilha sentado: 3×12–20.
+
+### UPPER complementar
+
+- Supino inclinado com halteres: 3×8–12.
+- Remada na máquina com peito apoiado: 3×8–12.
+- Puxada alta pela frente, pegada neutra: 2×10–15.
+- Elevação lateral: 3×12–20.
+- Tríceps acima da cabeça no cabo: 3×10–15.
+- Rosca martelo: 2×10–15.
+
+## Execução e progressão
+
+- Agachamento, romeno e búlgaro: aproximadamente 2 repetições em reserva.
+- Demais exercícios: 1–2 repetições em reserva.
+- Exercícios compostos: descanso de 2–3 minutos.
+- Isoladores: descanso de 90–120 segundos.
+- Abdômen: descanso de 60–90 segundos, sem carga externa obrigatória.
+- Ao alcançar o teto da faixa em todas as séries, com execução estável e o RIR previsto, aumentar pelo menor incremento disponível.
+- O bloco foi planejado para 6–8 semanas, com revisão de desempenho a cada duas semanas.
+- Drop-set e rest-pause não são obrigatórios neste bloco.
+
+## Proteção do histórico
+
+- Sessões antigas continuam com a ficha original salva.
+- Sessões novas usam a revisão 3, identificada como V6.2.
+- Para trocar uma sessão já criada, usar “Trocar para ficha V6.2”. O aplicativo cria antes uma cópia local de segurança.
+- O armazenamento continua local no navegador. Exportar o backup JSON regularmente.
+- Não apagar os dados do Safari para forçar atualização.
+
+## Publicação no GitHub Pages
+
+1. Exportar um backup JSON antes da atualização.
+2. Enviar para a raiz do repositório: `index.html`, `app.js`, `engine.js`, `style.css`, `sw.js`, `manifest.webmanifest`, `icon-192.png` e `icon-512.png`.
+3. Confirmar o commit e aguardar o GitHub Pages concluir a publicação.
+4. Fechar todas as abas do aplicativo e abrir novamente em uma aba normal do Safari.
+5. Confirmar “Training OS V6.2.0” no rodapé.
+
+`LEIA-ME.md` e a pasta `tests` são documentação e não precisam ser publicados.
 
 ## Verificações realizadas
 
-14 testes automatizados passaram: volume e contagem, sessão vazia/futura, parcial/concluída, validação numérica, separação de equipamentos/unidades, migração do hack, cardio legado, descarte de tonelagem ambígua, estrutura de backup, round-trip JSON, CSV e datas/pesos inválidos.
+- 17 testes automatizados passaram.
+- Preservação de sessões V6.1 e registros legados validada.
+- Cardio e abdômen podem ser salvos como sessão completa ou parcial.
+- Interface V6.2 verificada no navegador.
+- Registro completo de 25 minutos de cardio e 3 séries de abdômen testado.
 
-No navegador: bloqueio de finalização vazia; registro de 60 kg × 8 reps = 480 kg × reps; sessão parcial; persistência após recarregar; pesagem com data própria; troca para prancha/segundos; exportação JSON e importação com prévia e cópia de segurança. Layout visual inspecionado em largura de 390 px. Dados de teste não estão incluídos neste pacote.
+Para repetir os testes:
 
-Para repetir os testes com Node.js: node --test tests/test-engine.js
+```bash
+node --test tests/test-engine.js
+```
 
-A publicação no repositório não foi executada enquanto a conexão GitHub não estiver autorizada nesta conversa.
+## Base científica usada na reorganização
+
+- Pelland et al. Volume e hipertrofia com retornos decrescentes: https://pubmed.ncbi.nlm.nih.gov/41343037/
+- Schoenfeld et al. Frequência sem vantagem clara quando o volume é igualado: https://pubmed.ncbi.nlm.nih.gov/30558493/
+- Nunes et al. Ordem dos exercícios e prioridade de força: https://pubmed.ncbi.nlm.nih.gov/32077380/
+- Refalo et al. Hipertrofia semelhante com 1–2 RIR versus falha em treinados: https://pubmed.ncbi.nlm.nih.gov/38393985/
+- Plotkin et al. Agachamento e elevação pélvica para glúteos: https://pubmed.ncbi.nlm.nih.gov/37877099/
+
+Esses estudos sustentam princípios gerais. Eles não determinam individualmente a dose ideal. O ajuste depende da progressão, execução e recuperação registradas ao longo do bloco.
